@@ -8,7 +8,7 @@ using System.IO;
 
 namespace TASGoose
 {
-    class WireframeCollisions : MonoBehaviour
+    class ShowCollisions : MonoBehaviour
     {
 
         private String _collision;

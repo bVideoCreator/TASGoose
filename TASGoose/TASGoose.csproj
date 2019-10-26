@@ -50,7 +50,8 @@
     <Compile Include="Injector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TASG.cs" />
-    <Compile Include="WireframeCollisions.cs" />
+    <Compile Include="Wireframe.cs" />
+    <Compile Include="ShowCollisions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
