@@ -16,13 +16,15 @@ namespace TASGoose
 
         public GameObject _goose;
 
+        public bool _advancedOutput;
+
         public bool _noclip;
 
         public bool _disableHumans;
 
         public Vector3 _goosePos;
 
-        public ShowCollisions _wireframeCollisions;
+        //public ShowCollisions _wireframeCollisions;
 
         public bool _slowMo;
 
@@ -31,6 +33,8 @@ namespace TASGoose
         float _deltaTime = 0.0f;
 
         public bool _menuEnabled;
+
+        public GUIStyle _guiStyle = null;
 
         void SaveLocation()
         {
@@ -48,6 +52,9 @@ namespace TASGoose
             _goose.AddComponent<ShowCollisions>();
             Camera.main.gameObject.AddComponent<Wireframe>();
             _gooseMass = _goose.GetComponent<Rigidbody>().mass;
+            _guiStyle = new GUIStyle();
+            _guiStyle.fontSize = Screen.height * 2 / 100;
+            _guiStyle.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
         }
 
         void Update()
@@ -59,9 +66,14 @@ namespace TASGoose
                 _disableHumans = !_disableHumans;
             }
 
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.N))
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.N))
             {
                 _noclip = !_noclip;
+            }
+
+            if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.O))
+            {
+                _advancedOutput = !_advancedOutput;
             }
 
             if(_noclip)
@@ -153,21 +165,6 @@ namespace TASGoose
             {
                 Time.timeScale = 1;
             }
-            if (_menuEnabled)
-            {
-                GUI.Box(new Rect(20, 20, Screen.width / 2, Screen.height / 2), "TAS Goose");
-                GUI.Label(new Rect(30, 60, 2000, 20), "Slowmotion: CTRL+1");
-                GUI.Label(new Rect(30, 100, 2000, 20), "Save Location: CTRL+S");
-                GUI.Label(new Rect(30, 120, 2000, 20), "Load Location: CTRL+L");
-            }
-
-            if (!_menuEnabled)
-            {
-                GUI.Label(new Rect(20, 20, 2000, 200), "Position: " + _goose.gameObject.transform.position);
-                GUI.Label(new Rect(20, 40, 2000, 200), "Rotation: " + _goose.gameObject.transform.rotation);
-                GUI.Label(new Rect(20, 60, 2000, 200), "Velocity: " + _goose.GetComponent<Rigidbody>().velocity);
-                GUI.Label(new Rect(20, 80, 2000, 200), "TASGoose 2.0p1");
-            }
         }
 
         public void OnGUI()
@@ -188,11 +185,30 @@ namespace TASGoose
 
             if (!_menuEnabled)
             {
-                GUI.Label(new Rect(20, 20, 2000, 200), "Position: (" + _goose.gameObject.transform.position + ")");
-                GUI.Label(new Rect(20, 40, 2000, 200), "Rotation: (" + _goose.gameObject.transform.rotation + ")");
-                GUI.Label(new Rect(20, 60, 2000, 200), "Velocity: " + _goose.GetComponent<Rigidbody>().velocity);
-                GUI.Label(new Rect(20, 80, 2000, 200), "Noclip: " + _noclip);
-                GUI.Label(new Rect(20, 100, 2000, 200), "TASGoose 2.0");
+                if (!_advancedOutput)
+                {
+                    GUI.Label(new Rect(20, 20, 2000, 200), "Position: (" + _goose.gameObject.transform.position + ")");
+                    GUI.Label(new Rect(20, 40, 2000, 200), "Rotation: (" + _goose.gameObject.transform.rotation + ")");
+                    GUI.Label(new Rect(20, 60, 2000, 200), "Velocity: " + _goose.GetComponent<Rigidbody>().velocity);
+                    GUI.Label(new Rect(20, 80, 2000, 200), "Noclip: " + _noclip);
+                    GUI.Label(new Rect(20, 100, 2000, 200), "TASGoose 2.1");
+                }
+                else
+                {
+                    Vector3 _gs_position = _goose.gameObject.transform.position;
+                    Quaternion _gs_rotation = _goose.gameObject.transform.rotation;
+                    Vector3 _gs_velocity = _goose.GetComponent<Rigidbody>().velocity;
+
+                    string _position_string = string.Format("Position: ({0}, {1}, {2})", _gs_position.x.ToString("F4"), _gs_position.y.ToString("F4"), _gs_position.z.ToString("F4"));
+                    string _rotation_string = string.Format("Rotation: ({0}, {1}, {2}, {3})", _gs_rotation.x.ToString("F4"), _gs_rotation.y.ToString("F4"), _gs_rotation.z.ToString("F4"), _gs_rotation.w.ToString("F4"));
+                    string _velocity_string = string.Format("Velocity: ({0}, {1}, {2})", _gs_velocity.x.ToString("F4"), _gs_velocity.y.ToString("F4"), _gs_velocity.z.ToString("F4"));
+
+                    GUI.Label(new Rect(20, 30, 2000, 200), _position_string, _guiStyle);
+                    GUI.Label(new Rect(20, 60, 2000, 200), _rotation_string, _guiStyle);
+                    GUI.Label(new Rect(20, 90, 2000, 200), _velocity_string, _guiStyle);
+                    GUI.Label(new Rect(20, 120, 2000, 200), "Noclip: " + _noclip);
+                    GUI.Label(new Rect(20, 140, 2000, 200), "TASGoose 2.1");
+                }
             }
 
             if (_menuEnabled)
@@ -203,6 +219,7 @@ namespace TASGoose
                 GUI.Label(new Rect(30, 120, 2000, 20), "Load Location: CTRL+L");
                 GUI.Label(new Rect(30, 140, 2000, 20), "Wireframe View: CTRL+W");
                 GUI.Label(new Rect(30, 160, 2000, 20), "Delete All Humans: CTRL+B");
+                GUI.Label(new Rect(30, 200, 2000, 20), "Advanced Output: CTRL+O");
             }
         }
     }
